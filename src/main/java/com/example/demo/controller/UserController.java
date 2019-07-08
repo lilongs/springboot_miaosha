@@ -29,6 +29,25 @@ public class UserController extends BaseController {
     @Autowired
     private HttpServletRequest httpServletRequest;
 
+    //用户登陆接口
+    @RequestMapping(value = "/login", method = RequestMethod.POST, consumes = CONTENT_TYPE_FORMED)
+    @ResponseBody
+    public CommonReturnType login(@RequestParam(name = "telephone")String telephone,
+                                  @RequestParam(name = "password")String password) throws BusinessException, UnsupportedEncodingException, NoSuchAlgorithmException {
+        //入参校验
+        if(org.apache.commons.lang3.StringUtils.isEmpty(telephone)||
+                org.apache.commons.lang3.StringUtils.isEmpty(password)){
+            throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR);
+        }
+        //用户登陆服务，用来检验用户登陆是否合法
+        UserModel userModel=userService.validateLogin(telephone,this.EncodeByMd5(password));
+        //将用户登录凭证加入到用户登陆成功的session内
+        httpServletRequest.getSession().setAttribute("IS_LOGIN",true);
+        httpServletRequest.getSession().setAttribute("LOGIN_USER",userModel);
+
+        return CommonReturnType.create(null);
+    }
+
     //用户注册接口
     @RequestMapping(value = "/register", method = RequestMethod.POST, consumes = CONTENT_TYPE_FORMED)
     @ResponseBody
