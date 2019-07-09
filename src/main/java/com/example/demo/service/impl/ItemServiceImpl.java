@@ -12,6 +12,7 @@ import com.example.demo.validator.ValidationResult;
 import com.example.demo.validator.ValidatorImpl;
 import com.fasterxml.jackson.databind.util.BeanUtil;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -76,6 +77,13 @@ public class ItemServiceImpl implements ItemService {
         ItemModel itemModel=convertModelFromDataObject(itemDO,itemStockDO);
 
         return itemModel;
+    }
+
+    @Override
+    @Transactional
+    public boolean decreaseStock(Integer itemId, Integer amount) {
+        int affectedRow=itemStockDOMapper.decreaseStock(itemId,amount);
+        return affectedRow>0?true:false;
     }
 
     private ItemModel convertModelFromDataObject(ItemDO itemDO,ItemStockDO itemStockDO){
