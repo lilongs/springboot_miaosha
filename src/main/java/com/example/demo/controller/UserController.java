@@ -7,7 +7,6 @@ import com.example.demo.error.EmBusinessError;
 import com.example.demo.response.CommonReturnType;
 import com.example.demo.service.UserService;
 import com.example.demo.service.model.UserModel;
-import org.apache.tomcat.util.security.MD5Encoder;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
