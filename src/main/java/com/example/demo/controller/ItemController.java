@@ -5,6 +5,8 @@ import com.example.demo.error.BusinessException;
 import com.example.demo.response.CommonReturnType;
 import com.example.demo.service.ItemService;
 import com.example.demo.service.model.ItemModel;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -39,17 +41,17 @@ public class ItemController extends BaseController {
         itemModel.setImgUrl(imgUrl);
 
         ItemModel itemModelForReturn = itemService.createItem(itemModel);
-        ItemVO itemVO=convertVOFromModel(itemModelForReturn);
+        ItemVO itemVO = convertVOFromModel(itemModelForReturn);
         return CommonReturnType.create(itemVO);
     }
 
     //浏览页详情
     @RequestMapping(value = "/get", method = RequestMethod.GET)
     @ResponseBody
-    public CommonReturnType getItem(@RequestParam(name = "id")Integer id){
-        ItemModel itemModel=itemService.getItemById(id);
+    public CommonReturnType getItem(@RequestParam(name = "id") Integer id) {
+        ItemModel itemModel = itemService.getItemById(id);
 
-        ItemVO itemVO=convertVOFromModel(itemModel);
+        ItemVO itemVO = convertVOFromModel(itemModel);
 
         return CommonReturnType.create(itemVO);
     }
@@ -57,11 +59,11 @@ public class ItemController extends BaseController {
     //商品列表浏览
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     @ResponseBody
-    public CommonReturnType listItem(){
-        List<ItemModel> itemModelList= itemService.listItem();
+    public CommonReturnType listItem() {
+        List<ItemModel> itemModelList = itemService.listItem();
         //使用stream api将List内的itemMode转化为ItemVO
-        List<ItemVO> itemVOList=itemModelList.stream().map(itemModel -> {
-            ItemVO itemVO=this.convertVOFromModel(itemModel);
+        List<ItemVO> itemVOList = itemModelList.stream().map(itemModel -> {
+            ItemVO itemVO = this.convertVOFromModel(itemModel);
             return itemVO;
         }).collect(Collectors.toList());
         return CommonReturnType.create(itemVOList);
@@ -72,7 +74,16 @@ public class ItemController extends BaseController {
             return null;
         }
         ItemVO itemVO = new ItemVO();
-        BeanUtils.copyProperties(itemModel,itemVO);
+        BeanUtils.copyProperties(itemModel, itemVO);
+        if (itemModel.getPromoModel() != null) {
+            //有正在进行或即将进行的秒杀活动
+            itemVO.setPromoStatus(itemModel.getPromoModel().getStatus());
+            itemVO.setPromoId(itemModel.getPromoModel().getId());
+            itemVO.setStartDate(itemModel.getPromoModel().getStartDate().toString(DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")));
+            itemVO.setPromoPrice(itemModel.getPromoModel().getPromoItemPrice());
+        } else {
+            itemVO.setPromoStatus(0);
+        }
         return itemVO;
     }
 }

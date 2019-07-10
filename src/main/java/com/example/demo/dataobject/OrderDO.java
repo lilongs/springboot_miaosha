@@ -7,6 +7,8 @@ public class OrderDO {
 
     private Integer itemId;
 
+    private Integer promoId;
+
     private Double itemPrice;
 
     private Integer amount;
@@ -35,6 +37,14 @@ public class OrderDO {
 
     public void setItemId(Integer itemId) {
         this.itemId = itemId;
+    }
+
+    public Integer getPromoId() {
+        return promoId;
+    }
+
+    public void setPromoId(Integer promoId) {
+        this.promoId = promoId;
     }
 
     public Double getItemPrice() {

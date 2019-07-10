@@ -2,12 +2,16 @@ package com.example.demo.service.impl;
 
 import com.example.demo.dao.ItemDOMapper;
 import com.example.demo.dao.ItemStockDOMapper;
+import com.example.demo.dao.PromoDOMapper;
 import com.example.demo.dataobject.ItemDO;
 import com.example.demo.dataobject.ItemStockDO;
+import com.example.demo.dataobject.PromoDO;
 import com.example.demo.error.BusinessException;
 import com.example.demo.error.EmBusinessError;
 import com.example.demo.service.ItemService;
+import com.example.demo.service.PromoService;
 import com.example.demo.service.model.ItemModel;
+import com.example.demo.service.model.PromoModel;
 import com.example.demo.validator.ValidationResult;
 import com.example.demo.validator.ValidatorImpl;
 import com.fasterxml.jackson.databind.util.BeanUtil;
@@ -30,6 +34,8 @@ public class ItemServiceImpl implements ItemService {
     private ItemDOMapper itemDOMapper;
     @Autowired
     private ItemStockDOMapper itemStockDOMapper;
+    @Autowired
+    private PromoService promoService;
 
     @Override
     @Transactional
@@ -75,7 +81,11 @@ public class ItemServiceImpl implements ItemService {
         ItemStockDO itemStockDO = itemStockDOMapper.selectByItemId(itemDO.getId());
         //将dataobject->model
         ItemModel itemModel=convertModelFromDataObject(itemDO,itemStockDO);
-
+        //获取活动商品信息
+        PromoModel promoModel=promoService.getPromoByItemId(itemModel.getId());
+        if(promoModel!=null && promoModel.getStatus()!=3){
+            itemModel.setPromoModel(promoModel);
+        }
         return itemModel;
     }
 
