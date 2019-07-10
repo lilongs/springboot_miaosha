@@ -34,4 +34,5 @@ public class OrderController extends BaseController {
         OrderModel orderModel = orderService.createOrder(userModel.getId(), itemId, amount);
         return CommonReturnType.create(null);
     }
+
 }
